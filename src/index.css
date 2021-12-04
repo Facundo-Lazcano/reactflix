@@ -11,3 +11,38 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: 'Netflix Sans Black';
+  font-style: normal;
+  font-weight: 400;
+  src: local('NetflixSansBlack'), url('./fonts/NetflixSansBlack.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Netflix Sans Medium';
+  font-style: normal;
+  font-weight: 500;
+  src: local('NetflixSansMedium'), url('./fonts/NetflixSansMedium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Netflix Sans Bold';
+  font-style: normal;
+  font-weight: 700;
+  src: local('NetflixSansBold'), url('./fonts/NetflixSansBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Netflix Sans Ligth';
+  font-style: normal;
+  font-weight: 300;
+  src: local('NetflixSansLight'), url('./fonts/NetflixSansLight.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Netflix Sans Regular';
+  font-style: normal;
+  font-weight: 400;
+  src: local('NetflixSansRegular'), url('./fonts/NetflixSansRegular.ttf') format('truetype');
+}
