@@ -1,67 +1,19 @@
 import React, { useState } from 'react'
-import { Box, Image } from '@chakra-ui/react'
+import { Box, Text } from '@chakra-ui/react'
 import { Swiper, SwiperSlide } from 'swiper/react/swiper-react'
 import SwiperCore, { Navigation, Pagination } from 'swiper'
 import '../index.css'
 import 'swiper/swiper.min.css' // core Swiper
 import 'swiper/modules/navigation/navigation.min.css' // Navigation module
 import 'swiper/modules/pagination/pagination.min.css' // Pagination module
-import {
-  Svg1,
-  Svg2,
-  Svg3,
-  Svg4,
-  Svg5,
-  Svg6,
-  Svg7,
-  Svg8,
-  Svg9,
-  Svg10
-} from './svg/Numbers'
+import { renderNumber } from '../utils/RenderNumber'
+import MovieCard from './MovieCard'
 
 SwiperCore.use([Navigation, Pagination])
 
 const MoviesList = ({ movies, title, trending }) => {
   const [listHover, setListHover] = useState(false)
-  const [titleHover, setTitleHover] = useState(false)
   const [swiperHover, setSwiperHover] = useState(false)
-
-  const renderNumber = number => {
-    switch (number) {
-      case 1:
-        return <Svg1 />
-
-      case 2:
-        return <Svg2 />
-
-      case 3:
-        return <Svg3 />
-
-      case 4:
-        return <Svg4 />
-
-      case 5:
-        return <Svg5 />
-
-      case 6:
-        return <Svg6 />
-
-      case 7:
-        return <Svg7 />
-
-      case 8:
-        return <Svg8 />
-
-      case 9:
-        return <Svg9 />
-
-      case 10:
-        return <Svg10 />
-
-      default:
-        return <Svg1 />
-    }
-  }
 
   return (
     <Box
@@ -70,15 +22,11 @@ const MoviesList = ({ movies, title, trending }) => {
       onMouseLeave={() => setListHover(false)}
     >
       <Box style={styles.top}>
-        <Box
-          style={styles.title}
-          onMouseEnter={() => setTitleHover(true)}
-          onMouseLeave={() => setTitleHover(false)}
-          sx={{}}
-        >
+        <Box style={styles.title}>
           <Box>{title}</Box>
           <Box style={styles.subtitle}>
-            {listHover ? (titleHover ? ' Explorar Todos > ' : '>') : null}
+            <Text className='subtitle-hidden'>Explorar todos</Text>
+            <Text>{listHover && '>'}</Text>
           </Box>
         </Box>
       </Box>
@@ -87,12 +35,11 @@ const MoviesList = ({ movies, title, trending }) => {
         onMouseLeave={() => setSwiperHover(false)}
       >
         <Swiper
+          key={title}
           slidesPerView={5}
           slidesPerGroup={5}
           spaceBetween={10}
-          onSlideChange={() => console.log('slide change')}
-          onSwiper={swiper => console.log(swiper)}
-          navigation={true}
+          navigation={swiperHover ? true : false}
           pagination={
             swiperHover
               ? {
@@ -104,28 +51,13 @@ const MoviesList = ({ movies, title, trending }) => {
               : false
           }
           style={styles.swiper}
-          loop={true}
         >
           {movies.map((movie, idx) => (
             <SwiperSlide key={movie.id} cursor='pointer'>
-              {trending ? (
-                <Box style={styles.slide}>
-                  {trending ? renderNumber(idx + 1) : null}
-                  <Image
-                    src={`${process.env.REACT_APP_TMDB_IMAGE_BASE_URL}/${movie.poster_path}`}
-                    alt={movie.title}
-                    style={styles.img}
-                  />
-                </Box>
-              ) : (
-                <Box style={styles.slide}>
-                  <Image
-                    src={`${process.env.REACT_APP_TMDB_IMAGE_BASE_URL}/${movie.backdrop_path}`}
-                    alt={movie.title}
-                    style={trending ? styles.img : styles.imgBackdrop}
-                  />
-                </Box>
-              )}
+              <Box style={styles.slide}>
+                {trending ? renderNumber(idx + 1) : null}
+                <MovieCard movie={movie} trending={trending} />
+              </Box>
             </SwiperSlide>
           ))}
         </Swiper>
@@ -139,7 +71,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     margin: '0 1rem',
-    width: '95vw',
+    width: '94vw',
     marginBottom: '1rem'
   },
   top: {
@@ -157,9 +89,12 @@ const styles = {
     fontFamily: 'Netflix Sans Regular',
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    zIndex: '1'
   },
   subtitle: {
+    display: 'flex',
+    flexDirection: 'row',
     fontSize: '1rem',
     marginLeft: '1rem',
     fontFamily: 'Netflix Sans Regular',
@@ -169,14 +104,6 @@ const styles = {
     width: '100%',
     height: '100%',
     overflow: 'visible'
-  },
-  img: {
-    borderRadius: '4px',
-    height: '15vw'
-  },
-  imgBackdrop: {
-    borderRadius: '4px',
-    height: '140px'
   },
   slide: {
     display: 'flex',

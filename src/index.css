@@ -116,3 +116,20 @@ span.swiper-pagination-bullet-active-next {
   margin: 0;
 
 }
+
+.subtitle-hidden {
+  color: transparent;
+  margin-left: -11rem;
+  transition: all .5s ease-in-out;
+  margin-right: -4rem;
+  padding-left: 10rem;
+  font-size: .8rem;
+  margin-top: .2rem;
+}
+
+.subtitle-hidden:hover {
+  color: #fff;
+  transition: all .5s ease-in-out;
+  margin-left: -10rem;
+  margin-right: 0;
+}
