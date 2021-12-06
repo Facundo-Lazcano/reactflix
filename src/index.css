@@ -46,3 +46,73 @@ code {
   font-weight: 400;
   src: local('NetflixSansRegular'), url('./fonts/NetflixSansRegular.ttf') format('truetype');
 }
+
+.swiper-button-prev::after {
+  color: #fff;
+  position: absolute;
+  left: -30px;
+
+}
+
+.swiper-button-prev:hover {
+  transition: all 0.3s ease-in-out;
+  transform: scale(1.2);
+
+}
+
+.swiper-button-next::after {
+  color: #fff;
+  position: absolute;
+  right: -30px;
+}
+
+.swiper-button-next:hover {
+  transition: all 0.3s ease-in-out;
+  transform: scale(1.2);
+  text-shadow: #fff 0 0 10px;
+
+}
+
+
+
+.swiper-container {
+  overflow: visible;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.swiper-pagination {
+  position: absolute;
+  top: -25px;
+  right: 10px;
+  width: auto !important;
+  left: auto !important;
+  margin: 0;
+  height: 5px !important;
+}
+
+span.swiper-pagination-bullet {
+  margin: 1px !important;
+  border-radius: 0;
+  width: 10px;
+  height: 2px;
+  text-align: center;
+  color: #fff;
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
+
+}
+
+span.swiper-pagination-bullet-active {
+  color: #fff;
+  background: #e1e1e1;
+  margin: 0;
+
+}
+
+span.swiper-pagination-bullet-active-next {
+  margin: 0;
+
+}

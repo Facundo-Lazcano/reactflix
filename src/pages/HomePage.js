@@ -1,49 +1,45 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box } from '@chakra-ui/react'
 import MoviesList from '../components/MoviesList'
+import axios from 'axios'
+import HeaderShow from '../components/HeaderShow'
 
 const HomePage = () => {
-  const movies = [
-    {
-      id: 1,
-      title: 'The Shawshank Redemption',
-      poster_path:
-        'https://phantom-expansion.unidadeditorial.es/a9e8d1207c2e1ece71f66e2c0b591ca8/crop/0x23/1597x1085/resize/414/f/jpg/assets/multimedia/imagenes/2021/03/13/16156301244649.jpg'
-    },
-    {
-      id: 2,
-      title: 'The Shawshank Redemption',
-      poster_path:
-        'https://phantom-expansion.unidadeditorial.es/a9e8d1207c2e1ece71f66e2c0b591ca8/crop/0x23/1597x1085/resize/414/f/jpg/assets/multimedia/imagenes/2021/03/13/16156301244649.jpg'
-    },
-    {
-      id: 3,
-      title: 'The Shawshank Redemption',
-      poster_path:
-        'https://phantom-expansion.unidadeditorial.es/a9e8d1207c2e1ece71f66e2c0b591ca8/crop/0x23/1597x1085/resize/414/f/jpg/assets/multimedia/imagenes/2021/03/13/16156301244649.jpg'
-    },
-    {
-      id: 4,
-      title: 'The Shawshank Redemption',
-      poster_path:
-        'https://phantom-expansion.unidadeditorial.es/a9e8d1207c2e1ece71f66e2c0b591ca8/crop/0x23/1597x1085/resize/414/f/jpg/assets/multimedia/imagenes/2021/03/13/16156301244649.jpg'
-    },
-    {
-      id: 5,
-      title: 'The Shawshank Redemption',
-      poster_path:
-        'https://phantom-expansion.unidadeditorial.es/a9e8d1207c2e1ece71f66e2c0b591ca8/crop/0x23/1597x1085/resize/414/f/jpg/assets/multimedia/imagenes/2021/03/13/16156301244649.jpg'
-    },
-    {
-      id: 6,
-      title: 'The Shawshank Redemption',
-      poster_path:
-        'https://phantom-expansion.unidadeditorial.es/a9e8d1207c2e1ece71f66e2c0b591ca8/crop/0x23/1597x1085/resize/414/f/jpg/assets/multimedia/imagenes/2021/03/13/16156301244649.jpg'
+  const [trends, setTrends] = useState([])
+  const [popularTv, setPopularTv] = useState([])
+  const [headerShow, setHeaderShow] = useState()
+
+  const getHeaderShow = async () => {
+    if (trends.length > 0) {
+      const res = await axios.get(
+        `${process.env.REACT_APP_TMBD_BASE_URL}/tv/${trends[0].id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
+      )
+      setHeaderShow(res.data.results[0])
     }
-  ]
+  }
+
+  const getTrends = async () => {
+    const res = await axios.get(
+      `${process.env.REACT_APP_TMBD_BASE_URL}/trending/all/day?api_key=${process.env.REACT_APP_TMDB_API_KEY}&limit=10`
+    )
+    setTrends(res.data.results.slice(0, 10))
+  }
+  const getPopularTvShows = async () => {
+    const res = await axios.get(
+      `${process.env.REACT_APP_TMBD_BASE_URL}/tv/popular?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
+    )
+    setPopularTv(res.data.results)
+  }
+  useEffect(() => {
+    getTrends()
+    getPopularTvShows()
+    getHeaderShow()
+  }, [])
   return (
     <Box style={styles.container}>
-      <MoviesList title='Mi lista' movies={movies} />
+      <HeaderShow show={headerShow} />
+      <MoviesList title='Trending' movies={trends} trending />
+      <MoviesList title='Popular Tv Shows' movies={popularTv} />
     </Box>
   )
 }
