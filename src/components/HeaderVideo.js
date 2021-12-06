@@ -37,6 +37,7 @@ const HeaderShow = ({ show, showVideo }) => {
   useEffect(() => {
     handlePlay()
     getDetails()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollY])
 
   const handleMute = () => {

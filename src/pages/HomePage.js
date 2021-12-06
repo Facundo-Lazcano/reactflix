@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Box } from '@chakra-ui/react'
 import MoviesList from '../components/MoviesList'
 import axios from 'axios'
-import HeaderShow from '../components/HeaderShow'
+import HeaderShow from '../components/HeaderVideo'
 import { genres } from '../utils/Genres'
 
 const HomePage = () => {
@@ -11,7 +11,6 @@ const HomePage = () => {
   const [popularMovies, setPopularMovies] = useState([])
   const [topRatedTv, setTopRatedTv] = useState([])
   const [headerShow, setHeaderShow] = useState()
-  const [headerDetails, setHeaderDetails] = useState()
   const [randomGenre, setRandomGenre] = useState()
   const [randomGenre2, setRandomGenre2] = useState()
 
