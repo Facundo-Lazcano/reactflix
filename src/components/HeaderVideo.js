@@ -25,7 +25,7 @@ const HeaderShow = ({ show, showVideo }) => {
     if (show) {
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_TMBD_BASE_URL}/tv/${show.id}/content_ratings?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
+          `${process.env.REACT_APP_TMDB_BASE_URL}/tv/${show.id}/content_ratings?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
         )
         setRating(`${data.results[0].rating}+`)
       } catch (error) {
@@ -96,8 +96,11 @@ const HeaderShow = ({ show, showVideo }) => {
               onClick={handleMute}
             />
             <Box style={styles.title}>{show.original_name}</Box>
-            <Box style={styles.subtitle}>
-              {showOverview ? show.overview : null}
+            <Box
+              style={styles.subtitle}
+              color={showOverview ? '#fff' : 'transparent'}
+            >
+              {show.overview}
             </Box>
             <Box style={styles.rating}>{rating}</Box>
           </Box>
@@ -137,14 +140,14 @@ const styles = {
     zIndex: 3
   },
   subtitle: {
-    color: '#fff',
     fontSize: '1rem',
     position: 'absolute',
     top: '60%',
     left: '40px',
     zIndex: 3,
     width: '40%',
-    fontFamily: 'Netflix Sans Black'
+    fontFamily: 'Netflix Sans Black',
+    transition: 'all 0.5s ease-in-out'
   },
   rating: {
     color: '#fff',

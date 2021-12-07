@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react'
 import { Box } from '@chakra-ui/react'
 import MoviesList from '../components/MoviesList'
@@ -17,7 +18,7 @@ const HomePage = () => {
   const getRandomGenre = async () => {
     const random = await Math.floor(Math.random() * genres.length)
     const { data } = await axios.get(
-      `${process.env.REACT_APP_TMBD_BASE_URL}/discover/movie`,
+      `${process.env.REACT_APP_TMDB_BASE_URL}/discover/movie`,
       {
         params: {
           api_key: process.env.REACT_APP_TMDB_API_KEY,
@@ -27,13 +28,16 @@ const HomePage = () => {
       }
     )
     genres.filter(genre => genre.id !== genres[random].id)
+    data.results.map(movie => {
+      movie.media_type = 'movie'
+    })
     setRandomGenre({ name: genres[random].name, movies: data.results })
   }
 
   const getRandomGenre2 = async () => {
     const random = await Math.floor(Math.random() * genres.length)
     const { data } = await axios.get(
-      `${process.env.REACT_APP_TMBD_BASE_URL}/discover/movie`,
+      `${process.env.REACT_APP_TMDB_BASE_URL}/discover/movie`,
       {
         params: {
           api_key: process.env.REACT_APP_TMDB_API_KEY,
@@ -43,39 +47,51 @@ const HomePage = () => {
       }
     )
     genres.filter(genre => genre.id !== genres[random].id)
+    data.results.map(movie => {
+      movie.media_type = 'movie'
+    })
     setRandomGenre2({ name: genres[random].name, movies: data.results })
   }
 
   const getTrends = async () => {
     const res = await axios.get(
-      `${process.env.REACT_APP_TMBD_BASE_URL}/trending/all/day?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
+      `${process.env.REACT_APP_TMDB_BASE_URL}/trending/all/day?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
     )
     await setTrends(res.data.results.slice(0, 10))
 
     const response = await axios.get(
-      `${process.env.REACT_APP_TMBD_BASE_URL}/tv/${res.data.results[0].id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
+      `${process.env.REACT_APP_TMDB_BASE_URL}/tv/${res.data.results[0].id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
     )
     setHeaderShow(response.data.results[0])
   }
   const getPopularTvShows = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_TMBD_BASE_URL}/tv/popular?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_TMDB_BASE_URL}/tv/popular?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
     )
-    setPopularTv(res.data.results)
+    data.results.map(movie => {
+      movie.media_type = 'tv'
+    })
+    setPopularTv(data.results)
   }
 
   const getPopularMovies = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_TMBD_BASE_URL}/movie/popular?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_TMDB_BASE_URL}/movie/popular?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
     )
-    setPopularMovies(res.data.results)
+    data.results.map(movie => {
+      movie.media_type = 'movie'
+    })
+    setPopularMovies(data.results)
   }
 
   const getTopRatedTv = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_TMBD_BASE_URL}/tv/top_rated?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_TMDB_BASE_URL}/tv/top_rated?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
     )
-    setTopRatedTv(res.data.results)
+    data.results.map(movie => {
+      movie.media_type = 'tv'
+    })
+    setTopRatedTv(data.results)
   }
 
   useEffect(() => {

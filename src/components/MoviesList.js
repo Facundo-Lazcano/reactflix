@@ -6,15 +6,13 @@ import '../index.css'
 import 'swiper/swiper.min.css' // core Swiper
 import 'swiper/modules/navigation/navigation.min.css' // Navigation module
 import 'swiper/modules/pagination/pagination.min.css' // Pagination module
-import { renderNumber } from '../utils/RenderNumber'
-import MovieCard from './MovieCard'
+import CardContainer from './CardContainer'
 
 SwiperCore.use([Navigation, Pagination])
 
 const MoviesList = ({ movies, title, trending }) => {
   const [listHover, setListHover] = useState(false)
   const [swiperHover, setSwiperHover] = useState(false)
-
   return (
     <Box
       style={styles.container}
@@ -45,7 +43,7 @@ const MoviesList = ({ movies, title, trending }) => {
               ? {
                   clickable: false,
                   renderBullet: function (index, className) {
-                    return '<span class="' + className + '">' + '</span>'
+                    return '<span class="' + className + '"> </span>'
                   }
                 }
               : false
@@ -55,8 +53,7 @@ const MoviesList = ({ movies, title, trending }) => {
           {movies.map((movie, idx) => (
             <SwiperSlide key={movie.id} cursor='pointer'>
               <Box style={styles.slide}>
-                {trending ? renderNumber(idx + 1) : null}
-                <MovieCard movie={movie} trending={trending} />
+                <CardContainer movie={movie} trending={trending} idx={idx} />
               </Box>
             </SwiperSlide>
           ))}
@@ -109,7 +106,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    position: 'relative'
   }
 }
 export default MoviesList

@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 code {
@@ -79,9 +80,6 @@ code {
   overflow: visible;
 }
 
-body {
-  overflow-x: hidden;
-}
 
 .swiper-pagination {
   position: absolute;
@@ -132,4 +130,28 @@ span.swiper-pagination-bullet-active-next {
   transition: all .5s ease-in-out;
   margin-left: -10rem;
   margin-right: 0;
+}
+
+.swiper-slide:hover {
+  transition: all .5s ease-in-out;
+  transform: scale(1.4) translate(0, -20px);
+  overflow: visible;
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+.swiper-slide:first-child:hover {
+  margin-left: 15px;
+}
+
+.swiper-slide:last-child:hover {
+  margin: 0 -15;
+}
+
+.swiper-slide:nth-child(4):hover .swiper-slide:nth-child(9):hover .swiper-slide:nth-child(14):hover {
+  margin: 0 -15;
+}
+
+.swiper-slide:nth-child(5):hover .swiper-slide:nth-child(10):hover .swiper-slide:nth-child(15):hover {
+  margin: 0 15px;
 }
