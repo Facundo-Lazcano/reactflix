@@ -3,17 +3,33 @@ import React, { useState, useEffect } from 'react'
 import { Box } from '@chakra-ui/react'
 import MoviesList from '../components/MoviesList'
 import axios from 'axios'
-import HeaderShow from '../components/HeaderVideo'
+import HeaderVideo from '../components/HeaderVideo'
 import { genres } from '../utils/Genres'
+import Header from '../components/Header'
+import SearchPage from './SearchPage'
 
 const HomePage = () => {
   const [trends, setTrends] = useState([])
   const [popularTv, setPopularTv] = useState([])
   const [popularMovies, setPopularMovies] = useState([])
   const [topRatedTv, setTopRatedTv] = useState([])
-  const [headerShow, setHeaderShow] = useState()
+  const [headerVideo, setHeaderVideo] = useState()
   const [randomGenre, setRandomGenre] = useState()
   const [randomGenre2, setRandomGenre2] = useState()
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState([])
+
+  const searchMovies = async () => {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_TMDB_BASE_URL}/search/multi?api_key=${process.env.REACT_APP_TMDB_API_KEY}`,
+      {
+        params: {
+          query
+        }
+      }
+    )
+    setResults(data.results)
+  }
 
   const getRandomGenre = async () => {
     const random = await Math.floor(Math.random() * genres.length)
@@ -62,7 +78,7 @@ const HomePage = () => {
     const response = await axios.get(
       `${process.env.REACT_APP_TMDB_BASE_URL}/tv/${res.data.results[0].id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
     )
-    setHeaderShow(response.data.results[0])
+    setHeaderVideo(response.data.results[0])
   }
   const getPopularTvShows = async () => {
     const { data } = await axios.get(
@@ -101,21 +117,36 @@ const HomePage = () => {
     getTopRatedTv()
     getRandomGenre()
     getRandomGenre2()
-  }, [])
+    if (query) searchMovies()
+    if (!query) setResults([])
+  }, [query])
 
   return (
     <Box style={styles.container}>
-      <HeaderShow showVideo={headerShow} show={trends[0]} />
+      <Header query={query} setQuery={setQuery} />
+      {results.length > 0 ? (
+        <SearchPage movies={results} query={query} setQuery={setQuery} />
+      ) : (
+        <>
+          <HeaderVideo showVideo={headerVideo} show={trends[0]} />
 
-      <MoviesList title='Popular Tv Shows' movies={popularTv} />
-      <MoviesList title='Trending' movies={trends} trending />
-      <MoviesList title='Popular movies' movies={popularMovies} />
-      <MoviesList title='Top rated Tv Shows' movies={topRatedTv} />
-      {randomGenre && randomGenre2 && (
-        <Box>
-          <MoviesList title={randomGenre.name} movies={randomGenre.movies} />
-          <MoviesList title={randomGenre2.name} movies={randomGenre2.movies} />
-        </Box>
+          <MoviesList title='Popular Tv Shows' movies={popularTv} />
+          <MoviesList title='Trending' movies={trends} trending />
+          <MoviesList title='Popular movies' movies={popularMovies} />
+          <MoviesList title='Top rated Tv Shows' movies={topRatedTv} />
+          {randomGenre && randomGenre2 && (
+            <Box>
+              <MoviesList
+                title={randomGenre.name}
+                movies={randomGenre.movies}
+              />
+              <MoviesList
+                title={randomGenre2.name}
+                movies={randomGenre2.movies}
+              />
+            </Box>
+          )}
+        </>
       )}
     </Box>
   )

@@ -76,19 +76,19 @@ const styles = {
   bottomContainer: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#000000',
+    backgroundColor: '#181818',
     borderRadius: '4px'
   },
 
   muteButton: {
     position: 'absolute',
-    bottom: '10px',
+    bottom: '60px',
     right: '10px',
     color: 'white',
-    fontSize: '2rem',
+    fontSize: '1.5rem',
     borderRadius: '50%',
     border: '1px solid white',
-    padding: '0.5rem'
+    padding: '0.3rem'
   },
   title: {
     position: 'absolute',

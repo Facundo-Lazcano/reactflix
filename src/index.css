@@ -48,6 +48,13 @@ code {
   src: local('NetflixSansRegular'), url('./fonts/NetflixSansRegular.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'Netflix Sans Thin';
+  font-style: normal;
+  font-weight: 300;
+  src: local('NetflixSansThin'), url('./fonts/NetflixSansThin.ttf') format('truetype');
+}
+
 .swiper-button-prev::after {
   color: #fff;
   position: absolute;
@@ -138,20 +145,4 @@ span.swiper-pagination-bullet-active-next {
   overflow: visible;
   z-index: 2;
   margin-bottom: 0;
-}
-
-.swiper-slide:first-child:hover {
-  margin-left: 15px;
-}
-
-.swiper-slide:last-child:hover {
-  margin: 0 -15;
-}
-
-.swiper-slide:nth-child(4):hover .swiper-slide:nth-child(9):hover .swiper-slide:nth-child(14):hover {
-  margin: 0 -15;
-}
-
-.swiper-slide:nth-child(5):hover .swiper-slide:nth-child(10):hover .swiper-slide:nth-child(15):hover {
-  margin: 0 15px;
 }

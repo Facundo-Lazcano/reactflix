@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faVolumeUp, faVolumeMute } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
 
-const HeaderShow = ({ show, showVideo }) => {
+const HeaderVideo = ({ show, showVideo }) => {
   const [playing, setPlaying] = useState(false)
   const scrollY = useScrollPosition(60 /*fps*/)
   const [muted, setMuted] = useState(true)
@@ -165,4 +165,4 @@ const styles = {
     borderLeft: '2px solid #fff'
   }
 }
-export default HeaderShow
+export default HeaderVideo
