@@ -4,9 +4,10 @@ import { Box } from '@chakra-ui/react'
 import MoviesList from '../components/MoviesList'
 import axios from 'axios'
 import HeaderVideo from '../components/HeaderVideo'
-import { genres } from '../utils/Genres'
+import { genres } from '../utils/genres'
 import Header from '../components/Header'
 import SearchPage from './SearchPage'
+import Footer from '../components/Footer'
 
 const HomePage = () => {
   const [trends, setTrends] = useState([])
@@ -32,7 +33,7 @@ const HomePage = () => {
   }
 
   const getRandomGenre = async () => {
-    const random = await Math.floor(Math.random() * genres.length)
+    let random = await Math.floor(Math.random() * genres.length)
     const { data } = await axios.get(
       `${process.env.REACT_APP_TMDB_BASE_URL}/discover/movie`,
       {
@@ -48,11 +49,8 @@ const HomePage = () => {
       movie.media_type = 'movie'
     })
     setRandomGenre({ name: genres[random].name, movies: data.results })
-  }
-
-  const getRandomGenre2 = async () => {
-    const random = await Math.floor(Math.random() * genres.length)
-    const { data } = await axios.get(
+    random = await Math.floor(Math.random() * genres.length)
+    const res = await axios.get(
       `${process.env.REACT_APP_TMDB_BASE_URL}/discover/movie`,
       {
         params: {
@@ -63,10 +61,10 @@ const HomePage = () => {
       }
     )
     genres.filter(genre => genre.id !== genres[random].id)
-    data.results.map(movie => {
+    res.data.results.map(movie => {
       movie.media_type = 'movie'
     })
-    setRandomGenre2({ name: genres[random].name, movies: data.results })
+    setRandomGenre2({ name: genres[random].name, movies: res.data.results })
   }
 
   const getTrends = async () => {
@@ -116,9 +114,9 @@ const HomePage = () => {
     getPopularMovies()
     getTopRatedTv()
     getRandomGenre()
-    getRandomGenre2()
     if (query) searchMovies()
     if (!query) setResults([])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query])
 
   return (
@@ -148,6 +146,7 @@ const HomePage = () => {
           )}
         </>
       )}
+      <Footer />
     </Box>
   )
 }

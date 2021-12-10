@@ -40,7 +40,7 @@ const SearchPage = ({ movies, query, setQuery }) => {
       )}
       <Grid templateColumns='repeat(5, 1fr)' gap={1} style={styles.content}>
         {movies.map(movie => (
-          <Box key={movie.id} style={styles.movie} className='swiper-slide'>
+          <Box key={movie.id} style={styles.movie} className='movie-card'>
             <CardContainer movie={movie} />
           </Box>
         ))}
@@ -56,12 +56,13 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
-    width: '100%'
+    width: '95%'
   },
 
   movie: {
     width: '18vw',
-    position: 'relative'
+    position: 'relative',
+    marginBottom: '4rem'
   },
   relatedTitles: {
     display: 'flex',

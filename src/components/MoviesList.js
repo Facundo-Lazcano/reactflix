@@ -42,6 +42,7 @@ const MoviesList = ({ movies, title, trending }) => {
             swiperHover
               ? {
                   clickable: false,
+
                   renderBullet: function (index, className) {
                     return '<span class="' + className + '"> </span>'
                   }

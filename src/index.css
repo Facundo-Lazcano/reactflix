@@ -107,7 +107,6 @@ span.swiper-pagination-bullet {
   color: #fff;
   opacity: 1;
   background: rgba(255, 255, 255, 0.2);
-
 }
 
 span.swiper-pagination-bullet-active {
@@ -143,6 +142,55 @@ span.swiper-pagination-bullet-active-next {
   transition: all .5s ease-in-out;
   transform: scale(1.4) translate(0, -20px);
   overflow: visible;
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+.swiper-slide:first-child:hover,
+.swiper-slide:nth-child(6):hover,
+.swiper-slide:nth-child(11):hover,
+.swiper-slide:nth-child(16):hover {
+  transition: all .5s ease-in-out;
+  transform: scale(1.4) translate(30px, -20px);
+  overflow: visible;
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+.swiper-slide:last-child:hover,
+.swiper-slide:nth-child(5):hover,
+.swiper-slide:nth-child(10):hover,
+.swiper-slide:nth-child(15):hover {
+  transition: all .5s ease-in-out;
+  transform: scale(1.4) translate(-30px, -20px);
+  overflow: visible;
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+.movie-card:hover {
+  transition: all .5s ease-in-out;
+  transform: scale(1.4) translate(0, 40px);
+  z-index: 1;
+  margin-bottom: 0;
+}
+
+.movie-card:first-child:hover,
+.movie-card:nth-child(6):hover,
+.movie-card:nth-child(11):hover,
+.movie-card:nth-child(16):hover {
+  transition: all .5s ease-in-out;
+  transform: scale(1.4) translate(30px, 40px);
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+.movie-card:last-child:hover,
+.movie-card:nth-child(5):hover,
+.movie-card:nth-child(10):hover,
+.movie-card:nth-child(15):hover {
+  transition: all .5s ease-in-out;
+  transform: scale(1.4) translate(-30px, 40px);
   z-index: 2;
   margin-bottom: 0;
 }

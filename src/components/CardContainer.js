@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { Box } from '@chakra-ui/react'
 import ImageCard from './ImageCard'
 import VideoCard from './VideoCard'
@@ -7,23 +7,21 @@ const CardContainer = ({ movie, idx, trending }) => {
   const [hover, setHover] = useState(false)
   const cardRef = useRef(null)
 
-  useEffect(() => {
-    function handleClickOutside (event) {
-      if (cardRef.current && !cardRef.current.contains(event.target)) {
-        setHover(false)
-      }
+  const handleMouseMovement = (boxX, boxY) => {
+    const { x, y, width, height } = cardRef.current.getBoundingClientRect()
+    if (x < boxX && boxX < x + width && y < boxY && boxY < y + height) {
+      setHover(true)
+    } else {
+      setHover(false)
     }
+  }
 
-    document.addEventListener('mouseleave', handleClickOutside)
-    return () => {
-      document.removeEventListener('mouseleave', handleClickOutside)
-    }
-  }, [cardRef])
   return (
     <Box
+      ref={cardRef}
       style={trending ? styles.trendingImg : styles.imgBackdrop}
-      onMouseEnter={() => setTimeout(() => setHover(true), 300)}
-      onMouseLeave={() => setHover(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={e => handleMouseMovement(e.clientX, e.clientY)}
     >
       {!hover ? (
         <ImageCard movie={movie} idx={idx} trending={trending} />
@@ -42,13 +40,11 @@ const styles = {
     alignItems: 'center',
     borderRadius: '4px',
     width: '100%',
-    height: '15vw',
-    overflow: 'hidden'
+    height: '15vw'
   },
   imgBackdrop: {
     borderRadius: '4px',
     height: '140px',
-    overflow: 'hidden',
     width: '100%',
     margin: 0
   }
