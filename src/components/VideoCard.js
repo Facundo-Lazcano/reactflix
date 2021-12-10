@@ -7,49 +7,79 @@ import {
   faChevronDown,
   faPlayCircle,
   faVolumeMute,
-  faVolumeUp
+  faVolumeUp,
+  faCheck,
+  faPlus
 } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsDown, faThumbsUp } from '@fortawesome/free-regular-svg-icons'
-import { genres } from '../utils/genres'
 
 const VideoCard = ({ movie, hover }) => {
   const [loading, setLoading] = useState(false)
   const [muted, setMuted] = useState(true)
   const [key, setKey] = useState('')
   const [movieGenres, setMovieGenres] = useState([])
+  const [onList, setOnList] = useState(false)
+  const [rating, setRating] = useState('')
+  const [seasons, setSeasons] = useState(0)
+  const [type, setType] = useState('')
+  const [duration, setDuration] = useState('')
 
   const getVideo = async () => {
     setLoading(true)
-    if (movie.media_type === 'movie') {
-      const res = await axios.get(
-        `${process.env.REACT_APP_TMDB_BASE_URL}/movie/${movie.id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US`
-      )
-      setLoading(false)
-      if (res.data.results.length > 0) {
-        setKey(res.data.results[0].key)
-      }
-    } else {
-      const res = await axios.get(
-        `${process.env.REACT_APP_TMDB_BASE_URL}/tv/${movie.id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US`
-      )
-      setLoading(false)
-      if (res.data.results.length > 0) {
-        setKey(res.data.results[0].key)
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_TMDB_BASE_URL}/${movie.media_type}/${movie.id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US`
+    )
+    setLoading(false)
+    if (data.results.length > 0) {
+      setKey(data.results[0].key)
+    }
+  }
+
+  const getRating = async () => {
+    if (movie) {
+      try {
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_TMDB_BASE_URL}/${movie.media_type}/${movie.id}/content_ratings?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
+        )
+        setRating(data.results[0].rating)
+        console.log(data.results)
+      } catch (error) {
+        console.log(error)
       }
     }
   }
 
-  const getGenres = () => {
-    if (movie.genre_ids.length > 0) {
-      const allGenres = genres.filter(genre =>
-        movie.genre_ids.includes(genre.id)
-      )
-      setMovieGenres(allGenres.splice(0, 3))
+  const getDetails = async () => {
+    if (movie) {
+      try {
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_TMDB_BASE_URL}/${movie.media_type}/${movie.id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
+        )
+        if (data.genres) {
+          setMovieGenres(data.genres)
+        }
+        if (data.number_of_seasons) {
+          setSeasons(data.number_of_seasons)
+        }
+        if (data.type) {
+          setType(data.type)
+        }
+        if (data.runtime) {
+          let hours = Math.floor(data.runtime / 60)
+          let minutes = data.runtime % 60
+          setDuration(`${hours}h ${minutes}min`)
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
+
   useEffect(() => {
     getVideo()
-    getGenres()
+    getRating()
+    getDetails()
+    console.log(movie)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -93,19 +123,40 @@ const VideoCard = ({ movie, hover }) => {
               borderRadius: '50%'
             }}
           />
-          <Box style={styles.plusButton} variant={'outline'}>
-            +
-          </Box>
-          <FontAwesomeIcon icon={faThumbsUp} style={styles.button} />
-          <FontAwesomeIcon icon={faThumbsDown} style={styles.button} />
+          {!onList ? (
+            <FontAwesomeIcon
+              icon={faPlus}
+              style={styles.plusButton}
+              className='card-button'
+              onClick={() => setOnList(true)}
+            />
+          ) : (
+            <FontAwesomeIcon
+              icon={faCheck}
+              style={styles.plusButton}
+              className='card-button'
+              onClick={() => setOnList(false)}
+            />
+          )}
+          <FontAwesomeIcon
+            className='card-button'
+            icon={faThumbsUp}
+            style={styles.button}
+          />
+          <FontAwesomeIcon
+            className='card-button'
+            icon={faThumbsDown}
+            style={styles.button}
+          />
         </Box>
         <FontAwesomeIcon
+          className='card-button'
           icon={faChevronDown}
           style={{
             fontSize: '28px',
             color: 'white',
             fontWeight: 'lighter',
-            border: '2px solid grey',
+            border: '1.5px solid grey',
             borderRadius: '50%',
             position: 'absolute',
             bottom: '30%',
@@ -114,16 +165,35 @@ const VideoCard = ({ movie, hover }) => {
             width: '28px'
           }}
         />
+        <Box style={styles.dataContainer}>
+          <Box style={styles.voteAverage}>
+            {movie.vote_average * 10}% para tí{' '}
+          </Box>
+          <Box style={styles.rating}>{rating ? `${rating}+` : 'TODOS'}</Box>
+          {movie.media_type === 'tv' ? (
+            <Box style={styles.duration}>
+              {type === 'Miniseries'
+                ? type
+                : seasons > 1
+                ? `${seasons} Temporadas`
+                : `${seasons} Temporada`}
+            </Box>
+          ) : (
+            <Box style={styles.duration}>{duration}</Box>
+          )}
+          <Box style={styles.hd}>HD</Box>
+        </Box>
         <Wrap style={styles.genres}>
           {movieGenres.map((genre, i) => (
             <Wrap key={genre.id} style={styles.genre}>
-              {genre.name}
+              <Box>{genre.name}</Box>
               {i !== movieGenres.length - 1 && (
                 <Box
                   style={{
                     color: 'grey',
                     fontSize: '.75vw',
                     zIndex: 1,
+
                     padding: '0 5px'
                   }}
                 >
@@ -212,32 +282,77 @@ const styles = {
   button: {
     color: 'white',
     borderRadius: '50%',
-    border: '2px solid grey',
+    border: '1.5px solid grey',
     fontSize: '28px',
     zIndex: 1,
     padding: '5px',
     cursor: 'pointer'
   },
   plusButton: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
     fontSize: '28px',
-    color: 'white',
-    border: '2px solid grey',
+    color: 'grey',
+    borderRadius: '50%',
+    backgroundColor: '#141414',
+    border: '1.5px solid grey',
     width: '28px',
     height: '28px',
-    padding: '0',
-    paddingBottom: '5px',
-    borderRadius: '50%',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    padding: '5px'
+  },
+  dataContainer: {
+    position: 'absolute',
+    bottom: '15%',
+    width: '90%',
+    left: '6%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'left',
+    zIndex: 1,
+    alignItems: 'center'
+  },
+  voteAverage: {
+    color: 'rgb(70, 211, 105)',
+    fontSize: '10px',
+    fontWeight: 'bold',
+    lineHeight: '19.2px',
+    fontFamily: 'Netflix Sans Medium',
+    zIndex: 1,
+    marginRight: '3px'
+  },
+  rating: {
+    color: 'white',
+    fontSize: '7px',
+    fontWeight: '400',
+    padding: '0 5px',
+    fontFamily: 'Netflix Sans Thin',
+    zIndex: 1,
+    border: '1.5px solid grey',
+    marginRight: '3px'
+  },
+  duration: {
+    color: 'white',
+    fontSize: '10px',
+    fontWeight: '400',
+    lineHeight: '19.2px',
+    fontFamily: 'Netflix Sans Thin',
+    zIndex: 1,
+    marginRight: '3px'
+  },
+  hd: {
+    fontSize: '8px',
+    fontWeight: '400',
+    fontFamily: 'Netflix Sans Thin',
+    color: 'rgba(255, 255, 255, 0.9)',
+    border: '1.5px solid grey',
+    padding: '0 4px',
+    borderRadius: '5px'
   },
   genres: {
     position: 'absolute',
-    bottom: '10%',
-    left: '10%',
+    bottom: '5%',
+    left: '8%',
     color: 'white',
-    fontSize: '.75vw',
+    fontSize: '.60vw',
     fontWeight: 'bold',
     fontFamily: 'Netflix Sans Medium',
     width: '100%',

@@ -102,7 +102,7 @@ const HeaderVideo = ({ show, showVideo }) => {
             >
               {show.overview}
             </Box>
-            <Box style={styles.rating}>{rating}</Box>
+            {rating && <Box style={styles.rating}>{rating}</Box>}
           </Box>
         </Box>
       )}
@@ -157,7 +157,7 @@ const styles = {
     right: '0',
     width: '5%',
     textAlign: 'left',
-    zIndex: 3,
+    zIndex: 2,
     fontFamily: 'Netflix Sans Regular',
     backgroundColor: '#1F1F1F',
     padding: '0.3rem',
