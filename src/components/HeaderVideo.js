@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React, { useEffect, useState } from 'react'
 import { Box, Image } from '@chakra-ui/react'
 import ReactPlayer from 'react-player'
@@ -25,9 +26,21 @@ const HeaderVideo = ({ show, showVideo }) => {
     if (show) {
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_TMDB_BASE_URL}/tv/${show.id}/content_ratings?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
+          `${process.env.REACT_APP_TMDB_BASE_URL}/${show.media_type}/${
+            show.id
+          }/${
+            show.media_type === 'tv' ? 'content_ratings' : 'release_dates'
+          }?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
         )
-        setRating(`${data.results[0].rating}+`)
+        if (show.media_type === 'movie') {
+          data.results.map(result => {
+            if (result.iso_3166_1 === 'BR') {
+              setRating(`${result.release_dates[0].certification}+`)
+            }
+          })
+        } else {
+          setRating(`${data.results[0].rating}+`)
+        }
       } catch (error) {
         setRating('ATP')
       }
@@ -95,7 +108,7 @@ const HeaderVideo = ({ show, showVideo }) => {
               style={styles.button}
               onClick={handleMute}
             />
-            <Box style={styles.title}>{show.original_name}</Box>
+            <Box style={styles.title}>{show.original_name || show.title}</Box>
             <Box
               style={styles.subtitle}
               color={showOverview ? '#fff' : 'transparent'}

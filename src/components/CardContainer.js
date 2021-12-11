@@ -26,7 +26,7 @@ const CardContainer = ({ movie, idx, trending }) => {
       {!hover ? (
         <ImageCard movie={movie} idx={idx} trending={trending} />
       ) : (
-        <VideoCard movie={movie} idx={idx} />
+        <VideoCard movie={movie} idx={idx} setHover={setHover} />
       )}
     </Box>
   )

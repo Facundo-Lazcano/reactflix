@@ -1,4 +1,5 @@
-import { Box, Wrap } from '@chakra-ui/react'
+/* eslint-disable array-callback-return */
+import { Box, useDisclosure, Wrap } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import ReactPlayer from 'react-player'
@@ -12,8 +13,9 @@ import {
   faPlus
 } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsDown, faThumbsUp } from '@fortawesome/free-regular-svg-icons'
+import ModalShow from './ModalShow'
 
-const VideoCard = ({ movie, hover }) => {
+const VideoCard = ({ movie, setHover }) => {
   const [loading, setLoading] = useState(false)
   const [muted, setMuted] = useState(true)
   const [key, setKey] = useState('')
@@ -23,6 +25,8 @@ const VideoCard = ({ movie, hover }) => {
   const [seasons, setSeasons] = useState(0)
   const [type, setType] = useState('')
   const [duration, setDuration] = useState('')
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const getVideo = async () => {
     setLoading(true)
@@ -39,10 +43,21 @@ const VideoCard = ({ movie, hover }) => {
     if (movie) {
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_TMDB_BASE_URL}/${movie.media_type}/${movie.id}/content_ratings?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
+          `${process.env.REACT_APP_TMDB_BASE_URL}/${movie.media_type}/${
+            movie.id
+          }/${
+            movie.media_type === 'tv' ? 'content_ratings' : 'release_dates'
+          }?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
         )
-        setRating(data.results[0].rating)
-        console.log(data.results)
+        data.results.map(result => {
+          if (result.iso_3166_1 === 'BR') {
+            if (movie.media_type === 'movie') {
+              setRating(`${result.release_dates[0].certification}+`)
+            } else {
+              setRating(`${data.results[0].rating}+`)
+            }
+          }
+        })
       } catch (error) {
         console.log(error)
       }
@@ -84,127 +99,133 @@ const VideoCard = ({ movie, hover }) => {
   }, [])
 
   return (
-    { hover } && (
-      <Box style={styles.container}>
-        <ReactPlayer
-          url={`${process.env.REACT_APP_VIDEO_BASE_URL}/${key}`}
-          style={styles.video}
-          onBuffer={() => setLoading(true)}
-          onBufferEnd={() => setLoading(false)}
-          controls={false}
-          playing={!loading}
-          stopOnUnmount
-          muted={muted}
-        />
-        <Box
+    <Box style={styles.container}>
+      <ReactPlayer
+        url={`${process.env.REACT_APP_VIDEO_BASE_URL}/${key}`}
+        style={styles.video}
+        onBuffer={() => setLoading(true)}
+        onBufferEnd={() => setLoading(false)}
+        controls={false}
+        playing={!loading}
+        stopOnUnmount
+        muted={muted}
+      />
+      <Box
+        style={{
+          minWidth: '100vw',
+          minHeight: '100vh',
+          zIndex: 1,
+          position: 'absolute',
+          top: 0,
+          left: 0
+        }}
+      />
+      <FontAwesomeIcon
+        icon={muted ? faVolumeMute : faVolumeUp}
+        style={styles.muteButton}
+        onClick={() => setMuted(!muted)}
+      />
+      <Box style={styles.bottomContainer} />
+      <Box style={styles.title}>{movie.title || movie.name}</Box>
+      <Box style={styles.buttonsContainer}>
+        <FontAwesomeIcon
+          icon={faPlayCircle}
           style={{
-            minWidth: '100vw',
-            minHeight: '100vh',
-            zIndex: 1,
-            position: 'absolute',
-            top: 0,
-            left: 0
+            color: 'white',
+            fontSize: '28px',
+            backgroundColor: 'black',
+            borderRadius: '50%'
           }}
         />
-        <FontAwesomeIcon
-          icon={muted ? faVolumeMute : faVolumeUp}
-          style={styles.muteButton}
-          onClick={() => setMuted(!muted)}
-        />
-        <Box style={styles.bottomContainer} />
-        <Box style={styles.title}>{movie.title || movie.name}</Box>
-        <Box style={styles.buttonsContainer}>
+        {!onList ? (
           <FontAwesomeIcon
-            icon={faPlayCircle}
-            style={{
-              color: 'white',
-              fontSize: '28px',
-              backgroundColor: 'black',
-              borderRadius: '50%'
-            }}
-          />
-          {!onList ? (
-            <FontAwesomeIcon
-              icon={faPlus}
-              style={styles.plusButton}
-              className='card-button'
-              onClick={() => setOnList(true)}
-            />
-          ) : (
-            <FontAwesomeIcon
-              icon={faCheck}
-              style={styles.plusButton}
-              className='card-button'
-              onClick={() => setOnList(false)}
-            />
-          )}
-          <FontAwesomeIcon
+            icon={faPlus}
+            style={styles.plusButton}
             className='card-button'
-            icon={faThumbsUp}
-            style={styles.button}
+            onClick={() => setOnList(true)}
           />
+        ) : (
           <FontAwesomeIcon
+            icon={faCheck}
+            style={styles.plusButton}
             className='card-button'
-            icon={faThumbsDown}
-            style={styles.button}
+            onClick={() => setOnList(false)}
           />
-        </Box>
+        )}
         <FontAwesomeIcon
           className='card-button'
-          icon={faChevronDown}
-          style={{
-            fontSize: '28px',
-            color: 'white',
-            fontWeight: 'lighter',
-            border: '1.5px solid grey',
-            borderRadius: '50%',
-            position: 'absolute',
-            bottom: '30%',
-            right: '10%',
-            padding: '5px',
-            width: '28px'
-          }}
+          icon={faThumbsUp}
+          style={styles.button}
         />
-        <Box style={styles.dataContainer}>
-          <Box style={styles.voteAverage}>
-            {movie.vote_average * 10}% para tí{' '}
-          </Box>
-          <Box style={styles.rating}>{rating ? `${rating}+` : 'TODOS'}</Box>
-          {movie.media_type === 'tv' ? (
-            <Box style={styles.duration}>
-              {type === 'Miniseries'
-                ? type
-                : seasons > 1
-                ? `${seasons} Temporadas`
-                : `${seasons} Temporada`}
-            </Box>
-          ) : (
-            <Box style={styles.duration}>{duration}</Box>
-          )}
-          <Box style={styles.hd}>HD</Box>
-        </Box>
-        <Wrap style={styles.genres}>
-          {movieGenres.map((genre, i) => (
-            <Wrap key={genre.id} style={styles.genre}>
-              <Box>{genre.name}</Box>
-              {i !== movieGenres.length - 1 && (
-                <Box
-                  style={{
-                    color: 'grey',
-                    fontSize: '.75vw',
-                    zIndex: 1,
-
-                    padding: '0 5px'
-                  }}
-                >
-                  •
-                </Box>
-              )}
-            </Wrap>
-          ))}
-        </Wrap>
+        <FontAwesomeIcon
+          className='card-button'
+          icon={faThumbsDown}
+          style={styles.button}
+        />
       </Box>
-    )
+      <FontAwesomeIcon
+        icon={faChevronDown}
+        onClick={() => {
+          onOpen()
+        }}
+        style={{
+          fontSize: '28px',
+          color: 'white',
+          fontWeight: 'lighter',
+          border: '1.5px solid grey',
+          borderRadius: '50%',
+          position: 'absolute',
+          bottom: '30%',
+          right: '10%',
+          padding: '5px',
+          width: '28px',
+          zIndex: 100,
+          cursor: 'pointer'
+        }}
+      />
+      <Box style={styles.dataContainer}>
+        <Box style={styles.voteAverage}>{movie.vote_average * 10}% para tí</Box>
+        <Box style={styles.rating}>{rating ? `${rating}` : 'TODOS'}</Box>
+        {movie.media_type === 'tv' ? (
+          <Box style={styles.duration}>
+            {type === 'Miniseries'
+              ? type
+              : seasons > 1
+              ? `${seasons} Temporadas`
+              : `${seasons} Temporada`}
+          </Box>
+        ) : (
+          <Box style={styles.duration}>{duration}</Box>
+        )}
+        <Box style={styles.hd}>HD</Box>
+      </Box>
+      <Wrap style={styles.genres}>
+        {movieGenres.map((genre, i) => (
+          <Wrap key={genre.id} style={styles.genre}>
+            <Box>{genre.name}</Box>
+            {i !== movieGenres.length - 1 && (
+              <Box
+                style={{
+                  color: 'grey',
+                  fontSize: '.75vw',
+                  zIndex: 1,
+
+                  padding: '0 5px'
+                }}
+              >
+                •
+              </Box>
+            )}
+          </Wrap>
+        ))}
+      </Wrap>
+      <ModalShow
+        isOpen={isOpen}
+        onClose={onClose}
+        movie={movie}
+        setHover={setHover}
+      />
+    </Box>
   )
 }
 
@@ -215,7 +236,7 @@ const styles = {
     left: 0,
     minWidth: '250px',
     minHeight: '250px',
-    zIndex: 100,
+    zIndex: 1,
     overflow: 'hidden',
     backgroundColor: '#181818',
     borderRadius: '5px',

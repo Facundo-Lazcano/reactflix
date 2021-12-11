@@ -74,7 +74,7 @@ const HomePage = () => {
     await setTrends(res.data.results.slice(0, 10))
 
     const response = await axios.get(
-      `${process.env.REACT_APP_TMDB_BASE_URL}/tv/${res.data.results[0].id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
+      `${process.env.REACT_APP_TMDB_BASE_URL}/${res.data.results[0].media_type}/${res.data.results[0].id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
     )
     setHeaderVideo(response.data.results[0])
   }
