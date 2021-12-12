@@ -6,14 +6,12 @@ import ReactPlayer from 'react-player'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faChevronDown,
-  faPlayCircle,
   faVolumeMute,
-  faVolumeUp,
-  faCheck,
-  faPlus
+  faVolumeUp
 } from '@fortawesome/free-solid-svg-icons'
-import { faThumbsDown, faThumbsUp } from '@fortawesome/free-regular-svg-icons'
 import ModalShow from './ModalShow'
+import DataContainer from './DataContainer'
+import ButtonsContainer from './ButtonsContainer'
 
 const VideoCard = ({ movie, setHover }) => {
   const [loading, setLoading] = useState(false)
@@ -94,7 +92,6 @@ const VideoCard = ({ movie, setHover }) => {
     getVideo()
     getRating()
     getDetails()
-    console.log(movie)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -127,42 +124,7 @@ const VideoCard = ({ movie, setHover }) => {
       />
       <Box style={styles.bottomContainer} />
       <Box style={styles.title}>{movie.title || movie.name}</Box>
-      <Box style={styles.buttonsContainer}>
-        <FontAwesomeIcon
-          icon={faPlayCircle}
-          style={{
-            color: 'white',
-            fontSize: '28px',
-            backgroundColor: 'black',
-            borderRadius: '50%'
-          }}
-        />
-        {!onList ? (
-          <FontAwesomeIcon
-            icon={faPlus}
-            style={styles.plusButton}
-            className='card-button'
-            onClick={() => setOnList(true)}
-          />
-        ) : (
-          <FontAwesomeIcon
-            icon={faCheck}
-            style={styles.plusButton}
-            className='card-button'
-            onClick={() => setOnList(false)}
-          />
-        )}
-        <FontAwesomeIcon
-          className='card-button'
-          icon={faThumbsUp}
-          style={styles.button}
-        />
-        <FontAwesomeIcon
-          className='card-button'
-          icon={faThumbsDown}
-          style={styles.button}
-        />
-      </Box>
+      <ButtonsContainer onList={onList} setOnList={setOnList} />
       <FontAwesomeIcon
         icon={faChevronDown}
         onClick={() => {
@@ -183,22 +145,13 @@ const VideoCard = ({ movie, setHover }) => {
           cursor: 'pointer'
         }}
       />
-      <Box style={styles.dataContainer}>
-        <Box style={styles.voteAverage}>{movie.vote_average * 10}% para tí</Box>
-        <Box style={styles.rating}>{rating ? `${rating}` : 'TODOS'}</Box>
-        {movie.media_type === 'tv' ? (
-          <Box style={styles.duration}>
-            {type === 'Miniseries'
-              ? type
-              : seasons > 1
-              ? `${seasons} Temporadas`
-              : `${seasons} Temporada`}
-          </Box>
-        ) : (
-          <Box style={styles.duration}>{duration}</Box>
-        )}
-        <Box style={styles.hd}>HD</Box>
-      </Box>
+      <DataContainer
+        movie={movie}
+        seasons={seasons}
+        type={type}
+        rating={rating}
+        duration={duration}
+      />
       <Wrap style={styles.genres}>
         {movieGenres.map((genre, i) => (
           <Wrap key={genre.id} style={styles.genre}>
@@ -224,6 +177,13 @@ const VideoCard = ({ movie, setHover }) => {
         onClose={onClose}
         movie={movie}
         setHover={setHover}
+        rating={rating}
+        duration={duration}
+        genres={movieGenres}
+        seasons={seasons}
+        type={type}
+        setOnList={setOnList}
+        onList={onList}
       />
     </Box>
   )
@@ -287,87 +247,9 @@ const styles = {
     maxWidth: '70%',
     zIndex: 1,
     borderRadius: '5px',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: '5px'
   },
-  buttonsContainer: {
-    position: 'absolute',
-    bottom: '30%',
-    left: '10%',
-    width: '50%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    zIndex: 1
-  },
-  button: {
-    color: 'white',
-    borderRadius: '50%',
-    border: '1.5px solid grey',
-    fontSize: '28px',
-    zIndex: 1,
-    padding: '5px',
-    cursor: 'pointer'
-  },
-  plusButton: {
-    fontSize: '28px',
-    color: 'grey',
-    borderRadius: '50%',
-    backgroundColor: '#141414',
-    border: '1.5px solid grey',
-    width: '28px',
-    height: '28px',
-    cursor: 'pointer',
-    padding: '5px'
-  },
-  dataContainer: {
-    position: 'absolute',
-    bottom: '15%',
-    width: '90%',
-    left: '6%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'left',
-    zIndex: 1,
-    alignItems: 'center'
-  },
-  voteAverage: {
-    color: 'rgb(70, 211, 105)',
-    fontSize: '10px',
-    fontWeight: 'bold',
-    lineHeight: '19.2px',
-    fontFamily: 'Netflix Sans Medium',
-    zIndex: 1,
-    marginRight: '3px'
-  },
-  rating: {
-    color: 'white',
-    fontSize: '7px',
-    fontWeight: '400',
-    padding: '0 5px',
-    fontFamily: 'Netflix Sans Thin',
-    zIndex: 1,
-    border: '1.5px solid grey',
-    marginRight: '3px'
-  },
-  duration: {
-    color: 'white',
-    fontSize: '10px',
-    fontWeight: '400',
-    lineHeight: '19.2px',
-    fontFamily: 'Netflix Sans Thin',
-    zIndex: 1,
-    marginRight: '3px'
-  },
-  hd: {
-    fontSize: '8px',
-    fontWeight: '400',
-    fontFamily: 'Netflix Sans Thin',
-    color: 'rgba(255, 255, 255, 0.9)',
-    border: '1.5px solid grey',
-    padding: '0 4px',
-    borderRadius: '5px'
-  },
+
   genres: {
     position: 'absolute',
     bottom: '5%',
@@ -376,12 +258,13 @@ const styles = {
     fontSize: '.60vw',
     fontWeight: 'bold',
     fontFamily: 'Netflix Sans Medium',
-    width: '100%',
+    width: '92%',
     zIndex: 2,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    maxHeight: '8%'
   }
 }
 export default VideoCard
