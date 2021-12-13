@@ -19,17 +19,28 @@ const SimilarTitlesCard = ({ movie, media_type }) => {
         const { data } = await axios.get(
           `${process.env.REACT_APP_TMDB_BASE_URL}/${media_type}/${movie.id}/${
             media_type === 'tv' ? 'content_ratings' : 'release_dates'
-          }?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
+          }?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
         )
-        data.results.map(result => {
-          if (result.iso_3166_1 === 'BR') {
-            if (movie.media_type === 'movie') {
-              setRating(`${result.release_dates[0].certification}+`)
-            } else {
-              setRating(`${data.results[0].rating}+`)
+        if (media_type === 'movie') {
+          for (let idx = 0; idx < data.results.length; idx++) {
+            const result = data.results[idx]
+            for (let idx2 = 0; idx2 < result.release_dates.length; idx2++) {
+              const release_date = result.release_dates[idx2]
+              if (release_date.certification !== '') {
+                setRating(`${release_date.certification}+`)
+                break
+              }
             }
           }
-        })
+        } else {
+          for (let idx = 0; idx < data.results.length; idx++) {
+            const result = data.results[idx]
+            if (result.rating !== '') {
+              setRating(`${result.rating}+`)
+              break
+            }
+          }
+        }
       } catch (error) {
         console.log(error)
       }
