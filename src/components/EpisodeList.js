@@ -11,14 +11,14 @@ const EpisodeList = ({ tvShow }) => {
   const [selectOpen, setSelectOpen] = useState(false)
   const selectRef = useRef(null)
 
-  const handleSeasonChange = () => {
-    setSelectedSeason(selectRef.current.textContent.split(' ')[1])
+  const handleSeasonChange = e => {
+    setSelectedSeason(e.currentTarget.textContent.split(' ')[1])
     setSelectOpen(false)
   }
 
   const renderSelectOpen = seasons => {
     if (selectOpen) {
-      return seasons.map((season, index) => {
+      return seasons.map((season, idx) => {
         if (season.season_number === 0) return null
         if (season.episode_count === 0) return null
         return (
@@ -27,7 +27,7 @@ const EpisodeList = ({ tvShow }) => {
             style={styles.seasonOption}
             onClick={handleSeasonChange}
           >
-            <p ref={selectRef}>
+            <p ref={selectRef} key={idx}>
               Temporada {season.season_number}{' '}
               <span> ({season.episode_count} episodios)</span>
             </p>

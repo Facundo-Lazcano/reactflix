@@ -23,7 +23,6 @@ const SimilarTitlesCard = ({ movie, media_type }) => {
             media_type === 'tv' ? 'content_ratings' : 'release_dates'
           }?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES`
         )
-        console.log(data)
         data.results.map(result => {
           if (result.iso_3166_1 === 'BR') {
             if (movie.media_type === 'movie') {
@@ -59,7 +58,6 @@ const SimilarTitlesCard = ({ movie, media_type }) => {
   useEffect(() => {
     getDetailData()
     getRating()
-    console.log(movie)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
