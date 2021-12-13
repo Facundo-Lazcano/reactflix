@@ -1,5 +1,5 @@
 /* eslint-disable array-callback-return */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import EpisodeCard from './EspisodeCard'
 import { Box, Button } from '@chakra-ui/react'
 import axios from 'axios'
@@ -9,9 +9,10 @@ const EpisodeList = ({ tvShow }) => {
   const [selectedSeason, setSelectedSeason] = useState(1)
   const [episodes, setEpisodes] = useState([])
   const [selectOpen, setSelectOpen] = useState(false)
+  const selectRef = useRef(null)
 
-  const handleSeasonChange = e => {
-    setSelectedSeason(e.target.value)
+  const handleSeasonChange = () => {
+    setSelectedSeason(selectRef.current.textContent.split(' ')[1])
     setSelectOpen(false)
   }
 
@@ -26,10 +27,10 @@ const EpisodeList = ({ tvShow }) => {
             style={styles.seasonOption}
             onClick={handleSeasonChange}
           >
-            <option value={season.season_number}>
-              Temporada {season.season_number} ({season.episode_count}
-              episodios)
-            </option>
+            <p ref={selectRef}>
+              Temporada {season.season_number}{' '}
+              <span> ({season.episode_count} episodios)</span>
+            </p>
           </Box>
         )
       })
@@ -60,9 +61,11 @@ const EpisodeList = ({ tvShow }) => {
         >
           Temporada {selectedSeason}
         </Button>
-        <Box style={styles.seasonsContainer}>
-          {renderSelectOpen(tvShow.seasons)}
-        </Box>
+        {selectOpen && (
+          <Box style={styles.seasonsContainer}>
+            {renderSelectOpen(tvShow.seasons)}
+          </Box>
+        )}
       </Box>
       <Box style={styles.content}>
         {episodes.length > 0 &&
@@ -97,7 +100,7 @@ const styles = {
     fontSize: '18px',
     fontWeight: '600',
     color: '#fff',
-    backgroundColor: '#333333',
+    backgroundColor: '#242424',
     border: '1.5px solid grey',
     borderRadius: '5px',
     padding: '5px 30px'
@@ -110,14 +113,15 @@ const styles = {
     position: 'absolute',
     top: '105%',
     right: '0',
-    border: '1.5px solid grey'
+    border: '1.5px solid grey',
+    backgroundColor: '#242424',
+    padding: '5px 0'
   },
   seasonOption: {
     fontSize: '18px',
     fontWeight: '600',
     color: '#fff',
-    backgroundColor: '#333333',
-    padding: '5px',
+    padding: '5px 15px',
     cursor: 'pointer'
   }
 }

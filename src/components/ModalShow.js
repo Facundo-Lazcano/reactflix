@@ -15,13 +15,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons'
 import ButtonsContainer from './ButtonsContainer'
 import EpisodeList from './EpisodeList'
+import SimilarTitlesList from './SimilarTitlesList'
 
 const ModalShow = ({
   movie,
   isOpen,
-  onOpen,
   onClose,
-  setHover,
   rating,
   duration,
   seasons,
@@ -34,6 +33,7 @@ const ModalShow = ({
   const [mute, setMute] = useState(true)
   const [cast, setCast] = useState([])
   const [detailData, setDetailData] = useState({})
+  const [similarData, setSimilarData] = useState([])
 
   const getVideos = async () => {
     const { data } = await axios.get(
@@ -58,10 +58,19 @@ const ModalShow = ({
     setDetailData(data)
   }
 
+  const getSimilarData = async () => {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_TMDB_BASE_URL}/${movie.media_type}/${movie.id}/similar?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=es-ES&page=1`
+    )
+    setSimilarData(data.results)
+  }
+
   useEffect(() => {
     getVideos()
     getCast()
     getDetailData()
+    getSimilarData()
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -144,7 +153,10 @@ const ModalShow = ({
 
             <Box style={styles.relatedContent}>
               <Box style={styles.relatedTitle}>
-                Más títulos similares a este:
+                <SimilarTitlesList
+                  movies={similarData}
+                  media_type={movie.media_type}
+                />
               </Box>
             </Box>
           </ModalFooter>
@@ -255,8 +267,6 @@ const styles = {
   },
   relatedContent: {
     minHeight: '50vh',
-    marginTop: '120vh',
-    backgroundColor: 'red',
     zIndex: 2,
     width: '100%'
   },

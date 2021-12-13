@@ -204,5 +204,15 @@ span.swiper-pagination-bullet-active-next {
 }
 
 .select-option span {
-  font-size: 8px;
+  font-size: 14px;
+  margin: 0 10px;
+}
+
+.select-option:hover {
+  background-color: #424242;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
 }
