@@ -194,3 +194,15 @@ span.swiper-pagination-bullet-active-next {
   z-index: 2;
   margin-bottom: 0;
 }
+
+.cast-genre {
+  color: grey
+}
+
+.cast-genre span {
+  color: #fff;
+}
+
+.select-option span {
+  font-size: 8px;
+}

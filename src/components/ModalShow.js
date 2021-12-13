@@ -6,9 +6,7 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalFooter,
-  ModalOverlay,
-  Wrap,
-  WrapItem
+  ModalOverlay
 } from '@chakra-ui/react'
 import axios from 'axios'
 import DataContainer from './DataContainer'
@@ -16,6 +14,7 @@ import ReactPlayer from 'react-player'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faVolumeMute, faVolumeUp } from '@fortawesome/free-solid-svg-icons'
 import ButtonsContainer from './ButtonsContainer'
+import EpisodeList from './EpisodeList'
 
 const ModalShow = ({
   movie,
@@ -34,6 +33,7 @@ const ModalShow = ({
   const [videos, setVideos] = useState([])
   const [mute, setMute] = useState(true)
   const [cast, setCast] = useState([])
+  const [detailData, setDetailData] = useState({})
 
   const getVideos = async () => {
     const { data } = await axios.get(
@@ -51,9 +51,17 @@ const ModalShow = ({
     }
   }
 
+  const getDetailData = async () => {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_TMDB_BASE_URL}/${movie.media_type}/${movie.id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
+    )
+    setDetailData(data)
+  }
+
   useEffect(() => {
     getVideos()
     getCast()
+    getDetailData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -92,39 +100,48 @@ const ModalShow = ({
             backgroundColor={'#181818'}
             marginTop={'70vh'}
           >
-            <Box>
-              <Box style={styles.movieData}>
-                <Box style={styles.dataAndOverview}>
-                  <DataContainer
-                    movie={movie}
-                    rating={rating}
-                    duration={duration}
-                    seasons={seasons}
-                    type={type}
-                    modal={true}
-                  />
-                  <Box style={styles.overview}>{movie.overview}</Box>
-                </Box>
+            <Box style={styles.movieData}>
+              <Box style={styles.dataAndOverview}>
+                <DataContainer
+                  movie={movie}
+                  rating={rating}
+                  duration={duration}
+                  seasons={seasons}
+                  type={type}
+                  modal={true}
+                />
+                <Box style={styles.overview}>{movie.overview}</Box>
+              </Box>
 
-                <Box style={styles.castAndGenre}>
-                  <Wrap spacing='30px'>
-                    <WrapItem color={'grey'}>Elenco: </WrapItem>
-                    <WrapItem color={'#fff'}>
-                      {cast.map(actor => actor.name).join(', ')}
-                    </WrapItem>
-                  </Wrap>
-                  <Wrap>
-                    <WrapItem color={'grey'}>Generos:</WrapItem>
-                    <WrapItem>
-                      {genres &&
-                        genres.map(genre => (
-                          <WrapItem key={genre.id}>{genre.name}</WrapItem>
-                        ))}
-                    </WrapItem>
-                  </Wrap>
+              <Box style={styles.castAndGenre}>
+                <Box className='cast-genre'>
+                  <p color={'grey'}>
+                    Elenco:{' '}
+                    <span>
+                      {cast
+                        .slice(0, 8)
+                        .map(actor => actor.name)
+                        .join(', ')}
+                    </span>
+                  </p>
+                </Box>
+                <Box className='cast-genre'>
+                  <p color={'grey'}>
+                    Generos:
+                    <span>
+                      {' '}
+                      {genres && genres.map(genre => genre.name).join(' • ')}
+                    </span>
+                  </p>
                 </Box>
               </Box>
             </Box>
+            {movie.media_type === 'tv' && (
+              <Box style={styles.episodesContainer}>
+                <EpisodeList tvShow={detailData} />
+              </Box>
+            )}
+
             <Box style={styles.relatedContent}>
               <Box style={styles.relatedTitle}>
                 Más títulos similares a este:
@@ -234,10 +251,7 @@ const styles = {
   castAndGenre: {
     fontSize: '14px',
     fontWeight: '400',
-    minWidth: '40%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'left'
+    minWidth: '40%'
   },
   relatedContent: {
     minHeight: '50vh',
@@ -245,6 +259,9 @@ const styles = {
     backgroundColor: 'red',
     zIndex: 2,
     width: '100%'
+  },
+  episodesContainer: {
+    zIndex: 2
   }
 }
 export default ModalShow
