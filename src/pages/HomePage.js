@@ -4,7 +4,6 @@ import { Box } from '@chakra-ui/react'
 import MoviesList from '../components/MoviesList'
 import axios from 'axios'
 import HeaderVideo from '../components/HeaderVideo'
-import { genres } from '../utils/genres'
 import Header from '../components/Header'
 import SearchPage from './SearchPage'
 import Footer from '../components/Footer'
@@ -17,6 +16,7 @@ const HomePage = () => {
   const [headerVideo, setHeaderVideo] = useState()
   const [randomGenre, setRandomGenre] = useState()
   const [randomGenre2, setRandomGenre2] = useState()
+  const [genres, setGenres] = useState([])
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
 
@@ -33,38 +33,51 @@ const HomePage = () => {
   }
 
   const getRandomGenre = async () => {
-    let random = await Math.floor(Math.random() * genres.length)
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_TMDB_BASE_URL}/discover/movie`,
-      {
-        params: {
-          api_key: process.env.REACT_APP_TMDB_API_KEY,
-          language: 'es-ES',
-          with_genres: genres[random].id
-        }
-      }
-    )
-    genres.filter(genre => genre.id !== genres[random].id)
-    data.results.map(movie => {
-      movie.media_type = 'movie'
-    })
-    setRandomGenre({ name: genres[random].name, movies: data.results })
-    random = await Math.floor(Math.random() * genres.length)
     const res = await axios.get(
-      `${process.env.REACT_APP_TMDB_BASE_URL}/discover/movie`,
-      {
-        params: {
-          api_key: process.env.REACT_APP_TMDB_API_KEY,
-          language: 'es-ES',
-          with_genres: genres[random].id
-        }
-      }
+      `${process.env.REACT_APP_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
     )
-    genres.filter(genre => genre.id !== genres[random].id)
-    res.data.results.map(movie => {
-      movie.media_type = 'movie'
-    })
-    setRandomGenre2({ name: genres[random].name, movies: res.data.results })
+    setGenres(res.data.genres)
+    if (genres.length > 0) {
+      const randomIdx1 = Math.floor(Math.random() * genres.length)
+
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_TMDB_BASE_URL}/discover/movie`,
+        {
+          params: {
+            api_key: process.env.REACT_APP_TMDB_API_KEY,
+            language: 'es-ES',
+            with_genres: genres[randomIdx1].id
+          }
+        }
+      )
+
+      data.results.map(movie => {
+        movie.media_type = 'movie'
+      })
+      setRandomGenre({ name: genres[randomIdx1].name, movies: data.results })
+
+      let randomIdx2 = Math.floor(Math.random() * genres.length)
+      while (randomIdx2 === randomIdx1) {
+        randomIdx2 = Math.floor(Math.random() * genres.length)
+      }
+      const { data: data2 } = await axios.get(
+        `${process.env.REACT_APP_TMDB_BASE_URL}/discover/movie`,
+        {
+          params: {
+            api_key: process.env.REACT_APP_TMDB_API_KEY,
+            language: 'es-ES',
+            with_genres: genres[randomIdx2].id
+          }
+        }
+      )
+      data2.results.map(movie => {
+        movie.media_type = 'movie'
+      })
+      setRandomGenre2({
+        name: genres[randomIdx2].name,
+        movies: data2.results
+      })
+    }
   }
 
   const getTrends = async () => {
