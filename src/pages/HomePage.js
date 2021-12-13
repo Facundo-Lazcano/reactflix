@@ -10,6 +10,8 @@ import Footer from '../components/Footer'
 import { genres } from '../utils/genres'
 
 const HomePage = () => {
+  document.title = 'REACTFLIX'
+
   const [trends, setTrends] = useState([])
   const [popularTv, setPopularTv] = useState([])
   const [popularMovies, setPopularMovies] = useState([])

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Box, Input } from '@chakra-ui/react'
+import { Box, Image, Input } from '@chakra-ui/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faEnvelope, faSearch } from '@fortawesome/free-solid-svg-icons'
 import useScrollPosition from '@react-hook/window-scroll'
@@ -47,15 +47,7 @@ const Header = ({ query, setQuery }) => {
       marginRight: '2rem',
       cursor: 'pointer'
     },
-    logo: {
-      fontSize: '1.5rem',
-      fontWeight: 'bold',
-      color: 'red',
-      textShadow: '1px 1px 2px #000',
-      margin: '0.5rem',
-      fontFamily: 'Netflix Sans Icon ',
-      cursor: 'pointer'
-    },
+
     searchContainer: {
       display: 'flex',
       flexDirection: 'row',
@@ -90,7 +82,11 @@ const Header = ({ query, setQuery }) => {
   return (
     <Box style={styles.header}>
       <Box onClick={() => setQuery('')} style={styles.leftContainer}>
-        <h1 style={styles.logo}>REACTFLIX</h1>
+        <Image
+          src='https://fontmeme.com/permalink/211213/8b65521e99415855bca15d5d4f10ad2c.png'
+          h={45}
+          cursor={'pointer'}
+        />
         <Box style={styles.leftButtons}>
           <Box marginRight={4} cursor='pointer'>
             Inicio
