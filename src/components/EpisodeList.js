@@ -1,5 +1,5 @@
 /* eslint-disable array-callback-return */
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import EpisodeCard from './EspisodeCard'
 import { Box, Button } from '@chakra-ui/react'
 import axios from 'axios'
@@ -9,7 +9,6 @@ const EpisodeList = ({ tvShow }) => {
   const [selectedSeason, setSelectedSeason] = useState(1)
   const [episodes, setEpisodes] = useState([])
   const [selectOpen, setSelectOpen] = useState(false)
-  const selectRef = useRef(null)
 
   const handleSeasonChange = e => {
     setSelectedSeason(e.currentTarget.textContent.split(' ')[1])
@@ -27,7 +26,7 @@ const EpisodeList = ({ tvShow }) => {
             style={styles.seasonOption}
             onClick={handleSeasonChange}
           >
-            <p ref={selectRef} key={idx}>
+            <p>
               Temporada {season.season_number}{' '}
               <span> ({season.episode_count} episodios)</span>
             </p>

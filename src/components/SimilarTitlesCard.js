@@ -1,7 +1,6 @@
 /* eslint-disable array-callback-return */
 import React, { useState, useEffect } from 'react'
 import { Box, Image } from '@chakra-ui/react'
-import DataContainer from './DataContainer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faPlay, faPlus } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
@@ -12,7 +11,6 @@ const SimilarTitlesCard = ({ movie, media_type }) => {
   const [duration, setDuration] = useState('')
   const [seasons, setSeasons] = useState(0)
   const [rating, setRating] = useState('')
-  const [type, setType] = useState('')
   const [isHovered, setIsHovered] = useState(false)
 
   const getRating = async () => {
@@ -50,9 +48,7 @@ const SimilarTitlesCard = ({ movie, media_type }) => {
     if (data.number_of_seasons) {
       setSeasons(data.number_of_seasons)
     }
-    if (data.type) {
-      setType(data.type)
-    }
+    setDetailData(data)
   }
 
   useEffect(() => {
