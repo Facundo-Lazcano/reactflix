@@ -218,7 +218,7 @@ const styles = {
     offset: '0 0',
     objectPosition: 'center',
     maxWidth: '100vw',
-    maxHeight: '30vh',
+    maxHeight: '70%',
     boxfit: 'fill',
     zIndex: 0
   },
